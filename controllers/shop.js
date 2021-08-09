@@ -176,8 +176,29 @@ exports.getInvoice = (req , res , next) => {
       pdfDoc.pipe(fs.createWriteStream(invoicePath));
       pdfDoc.pipe(res); 
 
-      pdfDoc.text('Hello'); // alllow us to write single line
+      pdfDoc.fontSize(26).text('Invoice' , {
+        underline : true
+      });
+      // alllow us to write single line
+      pdfDoc.text('--------------------------');
+      let totalPrice = 0;
+      order.products.forEach(prod => {
+        totalPrice += prod.quantity * prod.product.price;
+        pdfDoc
+          .fontSize(14)
+          .text(
+          prod.product.title + 
+          '-' + 
+          prod.quantity + 
+          '×' + 
+          '$' + 
+          prod.product.price
+        );
+      });
     
+      pdfDoc.text('--------------------------');
+      pdfDoc.fontSize(20).text('Total Price: $ ' + totalPrice );  
+
       pdfDoc.end();
 
       //serveing file
@@ -204,10 +225,6 @@ exports.getInvoice = (req , res , next) => {
       // );
       // file.pipe(res); // write data to res: writeable strem
       // // res will contain data
-
-
-
-
     })
     .catch(err => next(err))
 
