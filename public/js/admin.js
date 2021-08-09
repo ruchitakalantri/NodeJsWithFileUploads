@@ -6,6 +6,8 @@ const deleteProduct = (btn) => {
     console.log('prodId : ' + prodId);
     console.log('csrf token : ' + csrf);
 
+    const productElement = btn.closest('article');
+
     // send http request 
     fetch('/admin/product/' + prodId , {
         method : 'DELETE' ,
@@ -14,7 +16,11 @@ const deleteProduct = (btn) => {
         }
     })
     .then(result => {
-        console.log(result);
+        return result.json();
+    })
+    .then(data => {
+        console.log(data);
+        productElement.parentNode.removeChild(productElement);
     })
     .catch(err => {
         console.log(err);
