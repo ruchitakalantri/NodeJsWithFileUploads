@@ -176,9 +176,10 @@ exports.getInvoice = (req , res , next) => {
       pdfDoc.pipe(fs.createWriteStream(invoicePath));
       pdfDoc.pipe(res); 
 
-      pdfDoc.fontSize(26).text('Invoice' , {
+      pdfDoc.fontSize(26).fillColor('purple').text('Invoice' , {
         underline : true
       });
+      
       // alllow us to write single line
       pdfDoc.text('--------------------------');
       let totalPrice = 0;
@@ -186,6 +187,7 @@ exports.getInvoice = (req , res , next) => {
         totalPrice += prod.quantity * prod.product.price;
         pdfDoc
           .fontSize(14)
+          .fillColor('blue')
           .text(
           prod.product.title + 
           '-' + 
@@ -195,36 +197,9 @@ exports.getInvoice = (req , res , next) => {
           prod.product.price
         );
       });
-    
       pdfDoc.text('--------------------------');
-      pdfDoc.fontSize(20).text('Total Price: $ ' + totalPrice );  
-
+      pdfDoc.fontSize(20).fillColor('red').text('Total Price: $ ' + totalPrice );  
       pdfDoc.end();
-
-      //serveing file
-      //pre-loadind data
-      // this will take long time for large file
-      // reading file data to memory
-      // fs.readFile(invoicePath , (err , data) => {
-      //   if(err) {
-      //     return next(err);
-      //   }
-      //   res.setHeader('Content-Type' , 'application/pdf');
-      //   res.setHeader('Content-Disposition' , 'inline : filename = "' + invoiceName + '"');
-      //   res.send(data);
-    
-      // });
-
-      // //... read pdf file
-      // //streaming data
-      // const file = fs.createReadStream(invoicePath); // read data
-      // res.setHeader('Content-Type' , 'application/pdf');
-      // res.setHeader(
-      //   'Content-Disposition' ,
-      //   'inline : filename = "' + invoiceName + '"'
-      // );
-      // file.pipe(res); // write data to res: writeable strem
-      // // res will contain data
     })
     .catch(err => next(err))
 
