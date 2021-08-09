@@ -261,7 +261,8 @@ form {
   margin: 0 1rem;
 }
 .pagination a:hover ,
-.pagination a:active {
+.pagination a:active,
+.pagination a.active {
   background: green;
   color: white;
 }
