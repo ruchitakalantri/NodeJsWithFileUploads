@@ -1,8 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
+const PDFDocument = require('pdfkit');
+
 const Product = require('../models/product');
 const Order = require('../models/order');
+
 
 exports.getProducts = (req, res, next) => {
   Product.find()
@@ -157,7 +160,26 @@ exports.getInvoice = (req , res , next) => {
       }
       const invoiceName = 'invoice-' + orderId + '.pdf';
       const invoicePath = path.join('data' , 'invoices' , invoiceName);
+      
+      // create pdf document
+
+      const pdfDoc = new PDFDocument();
+
+      //set headers
+      res.setHeader('Content-Type' , 'application/pdf');
+      res.setHeader(
+        'Content-Disposition' ,
+        'inline : filename = "' + invoiceName + '"'
+      );
+
+      //readable stream
+      pdfDoc.pipe(fs.createWriteStream(invoicePath));
+      pdfDoc.pipe(res); 
+
+      pdfDoc.text('Hello'); // alllow us to write single line
     
+      pdfDoc.end();
+
       //serveing file
       //pre-loadind data
       // this will take long time for large file
@@ -172,16 +194,19 @@ exports.getInvoice = (req , res , next) => {
     
       // });
 
-      //...
-      //streaming data
-      const file = fs.createReadStream(invoicePath); // read data
-      res.setHeader('Content-Type' , 'application/pdf');
-      res.setHeader(
-        'Content-Disposition' ,
-        'inline : filename = "' + invoiceName + '"'
-      );
-      file.pipe(res); // write data to res: writeable strem
-      // res will contain data
+      // //... read pdf file
+      // //streaming data
+      // const file = fs.createReadStream(invoicePath); // read data
+      // res.setHeader('Content-Type' , 'application/pdf');
+      // res.setHeader(
+      //   'Content-Disposition' ,
+      //   'inline : filename = "' + invoiceName + '"'
+      // );
+      // file.pipe(res); // write data to res: writeable strem
+      // // res will contain data
+
+
+
 
     })
     .catch(err => next(err))
