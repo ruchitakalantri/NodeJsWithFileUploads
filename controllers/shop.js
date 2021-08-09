@@ -57,6 +57,7 @@ exports.getProduct = (req, res, next) => {
       return next(error);
     });
 };
+
 exports.getIndex = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
@@ -88,6 +89,7 @@ exports.getIndex = (req, res, next) => {
       return next(error);
     });
 };
+
 
 exports.getCart = (req, res, next) => {
   req.user
