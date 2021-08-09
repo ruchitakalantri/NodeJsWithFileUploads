@@ -141,6 +141,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.getCheckout = (req , res , next) => {
   let products;
   let total = 0;
+  console.log('saurabh', req.user);
   req.user
   .populate('cart.items.productId')
   .execPopulate()
@@ -151,18 +152,18 @@ exports.getCheckout = (req , res , next) => {
       total += p.quantity * p.productId.price;
     });
 
-    return stripe.checkout.session.create({
+    return stripe.checkout.sessions.create({
       payment_method_types : ['card'],
       line_items : products.map(p => {
         return {
           name : p.productId.title ,
           description : p.productId.description ,
           amount : p.productId.price * 100 ,
-          currency : 'usd' ,
+          currency : 'inr' ,
           quantity : p.quantity
         };
       }) ,
-      success_url : req.protocol + '://' + req.get('host') + '/checkout/success', // => http://localhost:3000/checkout/success
+      success_url : req.protocol + '://' + req.get('host') + '/checkout/success' ,
       cancel_url : req.protocol + '://' + req.get('host') + '/checkout/cancel'
     }); 
   })
